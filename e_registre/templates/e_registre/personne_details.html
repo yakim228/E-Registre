@@ -1,0 +1,108 @@
+{% extends 'e_registre/base.html' %}
+ 
+{% load static %}
+
+{% block main %}
+ 
+    <div class="media post-meta">
+        <div class="media-left">
+            <a href="#">
+                <img alt="64x64" class="media-object" data-src="holder.js/64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNjFkYzE3YWQ0ZiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2MWRjMTdhZDRmIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMi4xNzk2ODc1IiB5PSIzNi41Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;">
+            </a>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">{{ personne.nom|default:"Untitled" }}</h4>
+            <p>
+                <i class="fas fa-user" data-toggle="tooltip" title="" data-original-title="Paste creator"></i> by
+                <!-- {{ personne.user.username|capfirst }} &nbsp; -->
+                <i class="fas fa-calendar-alt" data-toggle="tooltip" title="" data-original-title="Creation Date" ></i>
+                <time title="{{ personne.created_on }}">{{ personne.created_on|date:"M jS,  Y" }}</time> &nbsp;</span>
+                <i class="fas fa-eye"  data-toggle="tooltip" title="" data-original-title="Visits to this paste" ></i>
+                {{ personne.hits }} &nbsp;&nbsp;
+                <i class="fas fa-stopwatch" data-toggle="tooltip" title="" data-original-title="Expiration time"></i>
+                {{ personne.nom }}  &nbsp;
+                {% if personne.tags.all %}
+                    <i class="fas fa-tags" data-toggle="tooltip" title="" data-original-title="Tags"></i>
+                    {% for tag in personne.tags.all %}
+                        <a href="">{{ tag }}</a>{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            </p>
+        </div>
+        <table class="table table-bordered table-striped table-condensed">
+            <thead >
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Sexe</th>
+                <th>Numero de telephone</th>
+            </thead>
+            <tr class="success">
+                <td> {{personne.nom}} </td>
+                <td> {{personne.prenom}} </td>
+                <td>
+                    {% if personne.sexe == '1' %}
+                        Homme
+                    {% else %}
+                        {% if personne.sexe == '2' %}
+                            Femme
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td> {{personne.telephone}} </td>
+            </tr>
+        </table>
+ 
+    </div>
+    {% if request.user.is_authenticated %}
+    <a href="?liste={{request.GET.liste}}&personne={{personne.id}}" class="btn btn-danger">Supprimer la personne de la liste</a>
+    {% endif %}
+
+    <table class="table table-striped">
+        <thead >
+            <th>Heure d'arrivee</th>
+            <th>Heure de depart</th>
+            <th>les motifs</th>
+        </thead>
+        {% if visites|length > 0 %}    
+            {% for visite in visites  %}
+                <tr class="bg-success">
+                    <td id="heure"> {{visite.heure_darrivee|date:"H:i:s"}} </td>
+                    <td {% if visite.heure_depart != None %} class="color-success" {% else %} class="bg-danger" {% endif %}>
+                        {% if visite.heure_depart != None %}
+                            {{visite.heure_depart|date:"H:i:s"}}
+                        {% else %}
+                            <h6  ><span class="glyphicon glyphicon-alert"></span>&nbsp;&nbsp;&nbsp;{{visite.personne.nom}} n'a rien marque</h6>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if visite.motif == None %}
+                            pas de motif
+                        {% else %}
+                            {{visite.motif}}
+                        {% endif %}
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+
+    
+    {% if visites.paginator.num_pages > 1 %}
+        <nav aria-label="...">
+            <ul class="pager">
+ 
+                <li>Page {{ visites.number }} of {{ visites.paginator.num_pages }}</li>
+ 
+                {% if visites.has_previous %}
+                    <li><a href="?page={{ visites.previous_page_number }}">Previous</a></li>
+                {% endif %}
+ 
+                {% if visites.has_next %}
+                    <li><a href="?page={{ visites.next_page_number }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+   
+{% endblock %}

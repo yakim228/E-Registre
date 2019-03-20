@@ -1,0 +1,33 @@
+{% extends 'e_registre/base.html' %}
+ 
+{% load static %}
+ 
+{% block main %}
+        <h1>Motif, si possible le date de visite</h1>
+        <form action="" method="get" class="">
+            {% csrf_token %}
+            <label for="motif">Motif pour {{nom_personne.nom}} {{nom_personne.prenom}}</label>
+            <input type="hidden" name="id" value="{{nom_personne.id}}"/>
+            <textarea class="form-control" name="motif" id="" cols="30" rows="10">
+                
+            </textarea>
+            
+            <hr>
+            <input class="btn btn-primary" type="submit" value="submit"/>
+            <a href="{% url 'e_registre:liste_personnes' request.GET.liste %}" class="btn btn-primary" >Annuler</a>
+        </form>
+        
+
+    <!-- <div class="codeblock">
+        <div class="toolbar clearfix">
+            <span class="at-left"><a href="">{{ personne.nom }}</a></span>
+            <span class="at-right">
+                <a onclick="return confirm('Sure you want to delete this paste? ')" href="">delete</a>
+                <a href="">raw</a>
+                <a href="">download</a>
+            </span>
+        </div>
+        <div class="code-wrapper">{{ personne.highlighted_code|safe }}</div>
+    </div> -->
+ 
+{% endblock %}

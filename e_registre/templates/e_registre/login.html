@@ -1,0 +1,19 @@
+{% extends 'e_registre/base.html' %}
+{% load static %}
+{% block main %}
+        <form class="form-horizontal" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Nom d'utilisateur</label>
+                {{form.username}}
+            </div>
+            <div class="form-group">
+                <label>Votre mot de passe</label>
+                {{form.password}}
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Se connecter</button>
+            </div>
+            
+        </form>
+{% endblock %}

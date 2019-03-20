@@ -1,0 +1,42 @@
+{% extends 'e_registre/base.html' %}
+{% load static %}
+{% block main %}
+    <form class="form-horizontal" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">Nom d'utilisateur: </label>
+            <div class="col-lg-9 col-md-9 col-sm-9">
+                    {{rForm.username}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">Votre nom: </label>
+            <div class="col-lg-9 col-md-9 col-sm-9">
+                {{rForm.nom}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">Votre prenom: </label>
+            <div class="col-lg-9 col-md-9 col-sm-9">
+                {{rForm.prenom}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">Mot de passe: </label>
+            <div class="col-lg-9 col-md-9 col-sm-9">
+                {{rForm.password}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">Confirmer le mot de passe: </label>
+            <div class="col-lg-9 col-md-9 col-sm-9">
+                {{rForm.password1}}
+            </div>
+        </div>
+        <div class="form-group">
+                <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-10 col-md-offset-10 col-sm-offset-10">
+                    <button type="submit" class="btn btn-default">s'inscrire</button>
+                </div>
+        </div>
+    </form>
+{% endblock %}

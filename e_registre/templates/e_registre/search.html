@@ -1,0 +1,60 @@
+{% extends 'e_registre/base.html' %}
+ 
+{% block title %}
+    {{ request.GET.query }} - {{ block.super }}
+{% endblock %}
+ 
+{% block main %}
+ 
+    <form action="" class="form-inline">
+ 
+        <div class="form-group">
+            {{ form.search }}
+        </div>
+        
+        {% if request.user.is_authenticated %}
+            <div class="checkbox">
+                <label>
+                    {{ form.mypersonne }} Only search my personnes.
+                </label>
+            </div>
+        {% endif %}
+ 
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+ 
+    <hr>
+    
+    {% for personne in personnes %}
+ 
+        {% if forloop.first %}
+            <h5>{{ personnes.paginator.count }} record{{ personnes.paginator.count|pluralize }} found.</h5>
+            <hr>
+        {% endif %}
+ 
+        <h4><a href="{% url 'e_registre:personne_detail' personne.id %}">{{ personne.nom }}</a></h4>
+        <p>{{ personne.prenom|truncatechars:255 }}</p>
+        <hr>
+ 
+    {% empty %}
+        <h5>No records found.</h5>
+    {% endfor %}
+    
+    {% if personnes.paginator.num_pages > 1 %}
+        <nav aria-label="...">
+            <ul class="pager">
+ 
+                <li>Page {{ personnes.number }} of {{ personnes.paginator.num_pages }}</li>
+ 
+                {% if personnes.has_previous %}
+                    <li><a href="?search={{ request.GET.search }}&page={{ personnes.previous_page_number }}">Previous</a></li>
+                {% endif %}
+ 
+                {% if personnes.has_next %}
+                    <li><a href="?search={{ request.GET.search }}&page={{ personnes.next_page_number }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+ 
+{% endblock %}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 
+    {% load static %}
+    {% load humanize %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}E-Registre{% endblock %}</title>
+ 
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'e_registre/css/bootstrap.min.css' %}" >
+ 
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{% static 'e_registre/css/bootstrap-select.min.css' %}" >
+    <link href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" rel="stylesheet">
+ 
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'e_registre/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'e_registre/css/default.css' %}">
+    
+</head>
+<body>
+ 
+<nav class="navbar navbar-default navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                    aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/home">E-registre</a>
+        </div>
+ 
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1 ">
+            <ul class="nav navbar-nav">
+                <li {% if request.path == '/personnes/etudiants' %}class='active'{% endif %} >
+                    <a href="{% if request.user.is_authenticated %}/personnes/etudiants{% endif %}">Etudiant</a>
+                </li>
+                <li {% if request.path == '/personnes/visiteurs' %}class='active'{% endif %}>
+                    <a href="{% if request.user.is_authenticated %}/personnes/visiteurs{% endif %}">Visiteur<span class="sr-only">(current)</span></a>
+                </li>
+                <li {% if request.path == '/personnes/personnels' %}class='active'{% endif %}>
+                    <a href="{% if request.user.is_authenticated %}/personnes/personnels{% endif %}">Personnel</a>
+                </li>
+                <li {% if request.path == '/visites/' %}class='active'{% endif %}>
+                    <a href="{% if request.user.is_authenticated %}/visites{% endif %}">Visite</a>
+                </li>
+                <li {% if request.path == '/contact/' %}class='active'{% endif %}>
+                    <a href="">Contact</a>
+                </li>
+            </ul>
+ 
+            <form action="{% url 'e_registre:search' %}" class="navbar-form navbar-left" method="get">
+                <div class="form-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search" value="{{request.GET.search}}">
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false">
+                        {% if request.user.is_authenticated %}
+                            {{ request.user.username|upper }}
+                        {% else %}
+                            GUEST
+                        {% endif %}
+                        <span class="caret"></span>
+                    </a>
+                    {% if request.user.is_authenticated %}
+                        <ul class="dropdown-menu">
+                            <li><a href="">My Pastes</a></li>
+                            <li><a href="">Account Details</a></li>
+                            <li><a href="">Settings</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'e_registre:logout' %}">Logout</a></li>
+                        </ul>
+                    {% else %}
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'e_registre:register' %}">S'inscrire</a></li>
+                            <li><a href="{% url 'e_registre:login' %}">Se connecter</a></li>
+                        </ul>
+                    {% endif %}
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+ 
+ 
+<div class="container">
+ 
+    <div class="row">
+ 
+        <div class="col-lg-9 col-md-9">
+ 
+            {% if not request.user.is_authenticated and not request.path == '/login/' %}
+                <p class="alert alert-info">
+                    
+                    cliquez sur <b>GUEST</b> pour vous <b>connectez</b> ou <b>vous s'inscrire</b>
+        
+                </p>
+            {% endif %}
+            
+ 
+            {% block main %}
+                {#  override this block in the child template  #}
+            {% endblock %}
+ 
+        </div>
+ 
+        <div class="col-lg-3 col-md-3 text-center hidden-sm hidden-xs">
+            <p><b>Les entrees recentes</b></p>
+ 
+            <div class="list-group">
+                {% for recent_visite in recent_visites %}
+                    <a href="{{ recent_visite.get_absolute_url }}" class="list-group-item">
+                        <h5 class="list-group-item-heading"><span class="fa fa-globe
+                            "></span> <b>{{ recent_visite.personne.nom }}</b> {{ recent_visite.personne.prenom }}</h5>
+                        <p class="list-group-item-text">{{ recent_visite.heure_darrivee|naturaltime }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+ 
+        </div>
+    </div>
+</div>
+ 
+<hr>
+ 
+<footer>
+    <div class="social-icons">
+        <div class="container text-center">
+            <ul class="list-inline">
+                <li class="list-inline-item social-github">
+                    <a href="https://github.com/">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </li>
+                <li class="list-inline-item social-twitter">
+                    <a href="https://twitter.com/">
+                        <i class="fab fa-twitter-square"></i>
+                    </a>
+                </li>
+                <li class="list-inline-item social-facebook">
+                    <a href="https://www.facebook.com/">
+                        <i class="fab fa-facebook-square"></i>
+                    </a>
+                </li>
+                <li class="list-inline-item social-google-plus">
+                    <a href="https://plus.google.com/">
+                        <i class="fab fa-google-plus-g"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+ 
+    <div class="main-footer">
+        <div class="container text-center">
+            <ul>
+                <li><a href="#">Source Code</a></li>
+                <li><a href="#">OverIQ</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Other Tutorials</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+ 
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src={% static "e_registre/js/jquery.js" %}></script>
+ 
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<!-- Latest compiled and minified JavaScript -->
+<script src={% static "e_registre/js/bootstrap.min.js" %}></script>
+ 
+<!-- Latest compiled and minified JavaScript -->
+<script src={% static "e_registre/js/bootstrap-select.min.js" %}></script>
+
+{% block javascript %}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+ {% endblock %}
+
+</body>
+</html>
